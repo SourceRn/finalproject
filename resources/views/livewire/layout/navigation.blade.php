@@ -33,6 +33,17 @@ new class extends Component
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @if(auth()->user()->role === 'admin')
+                    <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')" wire:navigate>
+                        {{ __('Gestionar Usuarios') }}
+                    </x-nav-link>
+                    @endif
+                    
+                    @if(auth()->user()->role === 'teacher')
+                        <x-nav-link :href="route('teacher.exams.index')" :active="request()->routeIs('teacher.exams.*')" wire:navigate>
+                            {{ __('Mis Exámenes') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -84,6 +95,16 @@ new class extends Component
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+                    @if(auth()->user()->role === 'admin')
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')" wire:navigate>
+                            {{ __('Gestionar Usuarios') }}
+                        </x-nav-link>
+                    @endif
+                    @if(auth()->user()->role === 'teacher')
+                        <x-nav-link :href="route('teacher.exams.index')" :active="request()->routeIs('teacher.exams.*')" wire:navigate>
+                            {{ __('Mis Exámenes') }}
+                        </x-nav-link>
+                    @endif
         </div>
 
         <!-- Responsive Settings Options -->
