@@ -47,11 +47,8 @@
                                         {{ $correct ? $correct->option_text : 'Sin opción correcta' }}
                                     </span>
                                 @elseif($question->type === 'true_false')
-                                    @php
-                                        $correct = $question->options->where('is_correct', true)->first();
-                                    @endphp
                                     <span class="text-green-700 font-semibold">
-                                        {{ $correct ? $correct->option_text : 'Sin opción correcta' }}
+                                        {{ $question->trueFalseAnswer ? ($question->trueFalseAnswer->correct_answer ? 'Verdadero' : 'Falso') : 'Sin respuesta asignada' }}
                                     </span>
                                 @endif
                             </td>

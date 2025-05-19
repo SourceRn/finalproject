@@ -10,10 +10,11 @@ class QuestionAnswer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'exam_submission_id',
+        'submission_id',
         'question_id',
         'selected_option_id',
         'true_false_answer',
+        'is_correct',
     ];
 
     public function submission()

@@ -8,6 +8,7 @@ use App\Http\Middleware\IsStudent;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\StudentExamController;
 
 Route::view('/', 'welcome');
 
@@ -45,7 +46,7 @@ Route::middleware(['auth', IsTeacher::class])->group(function () {
     })->name('teacher.dashboard');
 });
 
-Route::middleware(['auth'])->prefix('teacher')->name('teacher.')->group(function () {
+Route::middleware(['auth', IsTeacher::class])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/exams', [ExamController::class, 'index'])->name('exams.index');
     Route::get('/exams/create', [ExamController::class, 'create'])->name('exams.create');
     Route::post('/exams', [ExamController::class, 'store'])->name('exams.store');
@@ -59,7 +60,7 @@ Route::middleware(['auth'])->prefix('teacher')->name('teacher.')->group(function
     Route::put('/exams/{exam}/questions/{question}', [QuestionController::class, 'update'])->name('exams.questions.update');
     Route::delete('/exams/{exam}/questions/{question}', [QuestionController::class, 'destroy'])->name('exams.questions.destroy');
 
-    // Entregas
+    // Submissions
     Route::get('/exams/{exam}/submissions', [ExamController::class, 'submissions'])->name('exams.submissions');
     Route::get('/exams/{exam}/submissions/{submission}', [ExamController::class, 'showSubmission'])->name('exams.submissions.show');
 });
@@ -68,6 +69,13 @@ Route::middleware(['auth', IsStudent::class])->group(function () {
     Route::get('/student/dashboard', function () {
         return view('student.dashboard');
     })->name('student.dashboard');
+});
+
+Route::middleware(['auth', IsStudent::class])->prefix('student')->name('student.')->group(function () {
+    
+    Route::get('/exams', [StudentExamController::class, 'index'])->name('exams.index');
+    Route::get('/exams/{exam}', [StudentExamController::class, 'show'])->name('exams.show');
+    Route::post('/exams/{exam}/submit', [StudentExamController::class, 'submit'])->name('exams.submit');
 });
 
 require __DIR__.'/auth.php';

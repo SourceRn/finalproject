@@ -21,19 +21,19 @@ class ExamController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-    ]);
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
 
-    $exam = Exam::create([
-        'title' => $request->title,
-        'description' => $request->description,
-        'created_by' => Auth::id(),
-    ]);
-    return redirect()->route('teacher.exams.index')->with('success', 'Examen creado correctamente');
-}
+        $exam = Exam::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'created_by' => Auth::id(),
+        ]);
+        return redirect()->route('teacher.exams.index')->with('success', 'Examen creado correctamente');
+    }
 
     public function submissions($examId)
     {

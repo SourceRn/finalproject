@@ -44,6 +44,12 @@ new class extends Component
                             {{ __('Mis Exámenes') }}
                         </x-nav-link>
                     @endif
+
+                    @if(auth()->user()->role === 'student')
+                        <x-nav-link :href="route('student.exams.index')" :active="request()->routeIs('students.exams.*')" wire:navigate>
+                            {{ __('Mis Exámenes') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 

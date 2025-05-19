@@ -33,6 +33,7 @@ class QuestionController extends Controller
         $request->validate([
             'question_text' => 'required|string',
             'type' => 'required|in:multiple_choice,true_false',
+            'options' => 'array|nullable',
             'options.*' => 'nullable|string',
             'correct_option' => 'nullable|integer',
             'true_false_answer' => 'nullable|boolean',
@@ -44,12 +45,14 @@ class QuestionController extends Controller
         ]);
 
         if ($request->type === 'multiple_choice') {
-            foreach ($request->options as $index => $optionText) {
-                if (!is_null($optionText)) {
-                    $question->options()->create([
-                        'option_text' => $optionText,
-                        'is_correct' => ($index == $request->correct_option),
-                    ]);
+            if ($request->has('options')) {
+                foreach ($request->options as $index => $optionText) {
+                    if (!is_null($optionText)) {
+                        $question->options()->create([
+                            'option_text' => $optionText,
+                            'is_correct' => ($index == $request->correct_option),
+                        ]);
+                    }
                 }
             }
         } elseif ($request->type === 'true_false') {
@@ -58,7 +61,7 @@ class QuestionController extends Controller
             ]);
         }
 
-        return redirect()->route('teacher.questions.index', $examId)->with('success', 'Pregunta añadida al examen.');
+        return redirect()->route('teacher.exams.questions.index', $examId)->with('success', 'Pregunta añadida al examen.');
     }
 
     public function edit($examId, $questionId)
@@ -77,6 +80,7 @@ class QuestionController extends Controller
         $request->validate([
             'question_text' => 'required|string',
             'type' => 'required|in:multiple_choice,true_false',
+            'options' => 'array|nullable',
             'options.*' => 'nullable|string',
             'correct_option' => 'nullable|integer',
             'true_false_answer' => 'nullable|boolean',
@@ -88,25 +92,22 @@ class QuestionController extends Controller
 
         if ($request->type === 'multiple_choice') {
             $question->options()->delete();
-            foreach ($request->options as $index => $optionText) {
-                if (!is_null($optionText)) {
-                    $question->options()->create([
-                        'option_text' => $optionText,
-                        'is_correct' => ($index == $request->correct_option),
-                    ]);
+            if ($request->has('options')) {
+                foreach ($request->options as $index => $optionText) {
+                    if (!is_null($optionText)) {
+                        $question->options()->create([
+                            'option_text' => $optionText,
+                            'is_correct' => ($index == $request->correct_option),
+                        ]);
+                    }
                 }
             }
-
-            // Asegúrate de eliminar cualquier respuesta de tipo true/false previa
             $question->trueFalseAnswer()->delete();
-
         } elseif ($request->type === 'true_false') {
-            // Elimina opciones de múltiples si existieran por error
             $question->options()->delete();
-
             $question->trueFalseAnswer()->updateOrCreate(
-                [],
-                ['correct_answer' => $request->true_false_answer]
+                ['question_id' => $question->id],
+                ['correct_answer' => $request->true_false_answer == '1']
             );
         }
 
@@ -123,3 +124,4 @@ class QuestionController extends Controller
         return redirect()->route('teacher.exams.questions.index', $examId)->with('success', 'Pregunta eliminada correctamente.');
     }
 }
+
